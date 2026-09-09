@@ -113,6 +113,9 @@ install_configuration() {
   STAGING_DIR="$(mktemp -d "$config_parent/.nvim.install.XXXXXX")"
   cp -p "$TEMP_DIR/repo/init.lua" "$TEMP_DIR/repo/lazy-lock.json" "$STAGING_DIR/"
   cp -R -p "$TEMP_DIR/repo/lua" "$STAGING_DIR/"
+  if [[ -d "$TEMP_DIR/repo/assets" ]]; then
+    cp -R -p "$TEMP_DIR/repo/assets" "$STAGING_DIR/"
+  fi
   if [[ -f "$TEMP_DIR/repo/.stylua.toml" ]]; then
     cp -p "$TEMP_DIR/repo/.stylua.toml" "$STAGING_DIR/"
   fi

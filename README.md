@@ -37,13 +37,25 @@ The installer:
 
 Review scripts before running them, especially scripts that install system packages with `sudo`.
 
-## Optional dashboard image
+## Dashboard image
 
-The dashboard remains portable by default. To display a local image when `ascii-image-converter` is installed, set:
+The dashboard uses `assets/dashboard.png` by default when `ascii-image-converter` is available.
+The installer does not install this optional command automatically. Install it separately, for example:
+
+```bash
+go install github.com/TheZoraiz/ascii-image-converter@latest
+```
+
+Make sure the directory containing the command (commonly `$HOME/go/bin`) is in `PATH` before starting Neovim.
+
+To override the bundled image, export an absolute or home-relative path before launching Neovim:
 
 ```bash
 export BIHAL_DASHBOARD_IMAGE="$HOME/path/to/image.jpg"
+nvim
 ```
+
+If Neovim is launched from a GUI, configure the variable in the GUI application's environment instead of only in an interactive shell. When the converter or selected image is unavailable, the dashboard loads normally without the image.
 
 ## Default theme
 

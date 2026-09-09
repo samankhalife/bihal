@@ -117,31 +117,36 @@ return {
 
         dashboard = {
             enabled = true,
-            sections = function()
-                local sections = {
-                    { section = "header" },
-                    { section = "keys", gap = 1, padding = 1 },
-                    { section = "startup" },
-                }
-                local image_path = vim.env.BIHAL_DASHBOARD_IMAGE
+            sections = {
+                { section = "header" },
+                { section = "keys", gap = 1, padding = 1 },
+                { section = "startup" },
+                function()
+                    if vim.fn.executable("ascii-image-converter") ~= 1 then
+                        return nil
+                    end
 
-                if image_path and vim.fn.filereadable(vim.fn.expand(image_path)) == 1
-                    and vim.fn.executable("ascii-image-converter") == 1 then
-                    table.insert(sections, {
+                    local custom_image = vim.env.BIHAL_DASHBOARD_IMAGE
+                    local image_path = custom_image and custom_image ~= ""
+                        and vim.fn.expand(custom_image)
+                        or vim.fn.stdpath("config") .. "/assets/dashboard.png"
+
+                    if vim.fn.filereadable(image_path) ~= 1 then
+                        return nil
+                    end
+
+                    return {
                         section = "terminal",
                         cmd = string.format(
-                            "ascii-image-converter %s -C -c",
-                            vim.fn.shellescape(vim.fn.expand(image_path))
+                            "ascii-image-converter %s -C -c -d 44,18",
+                            vim.fn.shellescape(image_path)
                         ),
-                        random = 15,
                         pane = 2,
-                        indent = 15,
-                        height = 20,
-                    })
-                end
-
-                return sections
-            end,
+                        indent = 8,
+                        height = 18,
+                    }
+                end,
+            },
         },
     },
 
