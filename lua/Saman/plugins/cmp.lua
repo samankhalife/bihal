@@ -3,6 +3,7 @@ return {
 	event = "InsertEnter",
 	branch = "main", -- fix for deprecated functions coming in nvim 0.13
 	dependencies = {
+		"hrsh7th/cmp-nvim-lsp", -- source for LSP completion
 		"hrsh7th/cmp-buffer", -- source for text in buffer
 		"hrsh7th/cmp-path", -- source for file system paths
 		"f3fora/cmp-spell",
@@ -231,7 +232,6 @@ return {
 				{ name = "nvim_lsp" },
 				{ name = "buffer" }, -- text within current buffer
 				{ name = "path" }, -- file system paths
-				{ name = "tailwindcss-colorizer-cmp" },
 				{
 					name = "spell", -- for markdown spellchecks completions
 					option = {
