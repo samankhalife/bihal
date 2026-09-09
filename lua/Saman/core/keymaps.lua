@@ -56,7 +56,28 @@ vim.keymap.set("n", "<leader>s",
 )
 
 -- Make current file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make file executable" })
+vim.keymap.set("n", "<leader>x", function()
+    local file_path = vim.api.nvim_buf_get_name(0)
+    if file_path == "" then
+        vim.notify("Save the buffer before making it executable.", vim.log.levels.WARN)
+        return
+    end
+
+    local uv = vim.uv or vim.loop
+    local stat = uv.fs_stat(file_path)
+    if not stat then
+        vim.notify("Could not read file permissions: " .. file_path, vim.log.levels.ERROR)
+        return
+    end
+
+    local ok, err = uv.fs_chmod(file_path, bit.bor(stat.mode, 73))
+    if not ok then
+        vim.notify("Could not make file executable: " .. tostring(err), vim.log.levels.ERROR)
+        return
+    end
+
+    vim.notify("Made executable: " .. vim.fn.fnamemodify(file_path, ":~"))
+end, { silent = true, desc = "Make file executable" })
 
 -- Tab management
 vim.keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "New tab" })
@@ -67,27 +88,18 @@ vim.keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open file in ne
 
 -- Splits
 vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Vertical split" })
-vim.keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Horizontal split" })
+vim.keymap.set("n", "<leader>sH", "<C-w>s", { desc = "Horizontal split" })
 vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Equalize splits" })
 vim.keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close split" })
-
--- Move between splits
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Focus left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Focus right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Focus lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Focus upper window" })
 
 -- Diagnostics
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
--- Toggle LSP diagnostics
-local diag_visible = true
+-- Toggle LSP diagnostics in the current buffer
 vim.keymap.set("n", "<leader>lx", function()
-    diag_visible = not diag_visible
-    vim.diagnostic.config({
-        virtual_text = diag_visible,
-        underline = diag_visible,
-    })
+    local bufnr = vim.api.nvim_get_current_buf()
+    local enabled = vim.diagnostic.is_enabled({ bufnr = bufnr })
+    vim.diagnostic.enable(not enabled, { bufnr = bufnr })
 end, { desc = "Toggle LSP diagnostics" })
 
 -- Copy file path

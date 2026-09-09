@@ -2,14 +2,13 @@ require("lazy").setup({
 	-- General Plugins
 	"tpope/vim-sleuth",
 	-- UI & Theme Plugins ":colorscheme"
-	-- require 'Saman.plugins.colorscheme',
+	require("Saman.plugins.colorscheme"),
 	-- require 'Saman.plugins.catppuccin',
 	require("Saman.plugins.indent_line"),
 	require("Saman.plugins.nvim-tmux-navigation"),
 
 	-- Completion & LSP Plugins
 	require("Saman.plugins.cmp"),
-	require("Saman.plugins.completions"),
 	require("Saman.plugins.lspconfig"),
 	require("Saman.plugins.conform"),
 	require("Saman.plugins.mini"),
@@ -18,7 +17,7 @@ require("lazy").setup({
 	require("Saman.plugins.neo-tree"),
 	require("Saman.plugins.snacks"),
 	require("Saman.plugins.auto-session"),
-    require("Saman.plugins.harpoon"),
+	require("Saman.plugins.harpoon"),
 
 	-- Git Plugins
 	require("Saman.plugins.gitsigns"),

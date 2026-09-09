@@ -117,19 +117,31 @@ return {
 
         dashboard = {
             enabled = true,
-            sections = {
-                { section = "header" },
-                { section = "keys", gap = 1, padding = 1 },
-                { section = "startup" },
-                {
-                    section = "terminal",
-                    cmd = "ascii-image-converter ~/Desktop/Others/profiles.JPG -C -c",
-                    random = 15,
-                    pane = 2,
-                    indent = 15,
-                    height = 20,
-                },
-            },
+            sections = function()
+                local sections = {
+                    { section = "header" },
+                    { section = "keys", gap = 1, padding = 1 },
+                    { section = "startup" },
+                }
+                local image_path = vim.env.BIHAL_DASHBOARD_IMAGE
+
+                if image_path and vim.fn.filereadable(vim.fn.expand(image_path)) == 1
+                    and vim.fn.executable("ascii-image-converter") == 1 then
+                    table.insert(sections, {
+                        section = "terminal",
+                        cmd = string.format(
+                            "ascii-image-converter %s -C -c",
+                            vim.fn.shellescape(vim.fn.expand(image_path))
+                        ),
+                        random = 15,
+                        pane = 2,
+                        indent = 15,
+                        height = 20,
+                    })
+                end
+
+                return sections
+            end,
         },
     },
 
@@ -140,7 +152,7 @@ return {
         { "<leader>dB", function() require("snacks").bufdelete() end, desc = "Delete Buffer" },
 
         { "<leader>pf", function() require("snacks").picker.files() end, desc = "Find Files" },
-        { "<leader>pc", function() require("snacks").picker.files({ cwd = "~/dotfiles/nvim/.config/nvim/lua" }) end, desc = "Find Config" },
+        { "<leader>pc", function() require("snacks").picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config" },
         { "<leader>ps", function() require("snacks").picker.grep() end, desc = "Grep" },
         { "<leader>pws", function() require("snacks").picker.grep_word() end, desc = "Grep Word", mode = { "n", "x" } },
         { "<leader>pk", function() require("snacks").picker.keymaps({ layout = "ivy" }) end, desc = "Keymaps" },
